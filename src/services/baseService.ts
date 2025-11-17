@@ -80,14 +80,14 @@ export const baseService = {
     }
   },
 
-  // Send self-tip transaction on Base
+  // Send self-tip transaction on Base Mainnet
   sendSelfTip: async (amount: string, userAddress: string): Promise<string> => {
     try {
       // Get the appropriate provider (Baseapp browser wallet or Farcaster SDK)
       const provider = getProvider();
       
       if (!provider) {
-        throw new Error('No wallet provider found');
+        throw new Error('No wallet provider found. Please connect your wallet.');
       }
 
       // Request wallet connection and get accounts
@@ -101,6 +101,44 @@ export const baseService = {
 
       const walletAddress = accounts[0];
 
+      // Check network - MUST be Base Mainnet (Chain ID: 8453)
+      const chainId = await provider.request({ method: 'eth_chainId' });
+      const baseMainnetChainId = '0x2105'; // 8453 in hex
+      
+      if (chainId !== baseMainnetChainId) {
+        throw new Error(
+          `Wrong network! Please switch to Base Mainnet.\n\nCurrent: ${chainId}\nRequired: Base Mainnet (Chain ID: 8453)`
+        );
+      }
+
+      // Check balance before transaction
+      const balance = await provider.request({
+        method: 'eth_getBalance',
+        params: [walletAddress, 'latest']
+      });
+
+      const balanceInEth = parseInt(balance, 16) / 1e18;
+      const requestedAmount = parseFloat(amount);
+
+      // Estimate gas (typically ~21000 for simple transfer)
+      const estimatedGas = 21000;
+      const gasPrice = await provider.request({ method: 'eth_gasPrice' });
+      const gasCostInEth = (parseInt(gasPrice, 16) * estimatedGas) / 1e18;
+      const totalNeeded = requestedAmount + gasCostInEth;
+
+      if (balanceInEth < totalNeeded) {
+        throw new Error(
+          `Insufficient balance!
+
+Your balance: ${balanceInEth.toFixed(6)} ETH
+Amount needed: ${requestedAmount} ETH
+Estimated gas: ${gasCostInEth.toFixed(6)} ETH
+Total required: ${totalNeeded.toFixed(6)} ETH
+
+You need ${(totalNeeded - balanceInEth).toFixed(6)} more ETH`
+        );
+      }
+
       // Create tip record
       const tipId = Date.now().toString();
       storage.addTipToHistory({
@@ -111,17 +149,18 @@ export const baseService = {
         status: 'pending'
       });
 
-      // Convert amount to wei (assuming ETH)
+      // Convert amount to wei
       const amountInWei = (parseFloat(amount) * 1e18).toString(16);
 
-      // Send transaction using the provider
-      // Note: This sends to self (from wallet to wallet)
+      // Send transaction TO SELF (complete refund minus gas)
+      // This is a self-transfer: wallet sends to itself
       const txHash = await provider.request({
         method: 'eth_sendTransaction',
         params: [{
           from: walletAddress,
-          to: userAddress || walletAddress,
+          to: walletAddress, // Send to SELF for complete refund
           value: `0x${amountInWei}`,
+          gas: '0x5208', // 21000 in hex
         }]
       });
 
