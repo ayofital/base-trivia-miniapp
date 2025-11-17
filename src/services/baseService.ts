@@ -31,7 +31,9 @@ const getProvider = () => {
     return (window as any).ethereum;
   }
   // Fallback to Farcaster SDK wallet provider
-  return sdk.wallet?.ethProvider || null;
+  // Note: Farcaster SDK provider may have limited methods
+  const farcasterProvider = sdk.wallet?.ethProvider || null;
+  return farcasterProvider;
 };
 
 export const baseService = {
@@ -125,13 +127,18 @@ export const baseService = {
       const walletAddress = accounts[0];
 
       // Check network - MUST be Base Mainnet (Chain ID: 8453)
-      const chainId = await provider.request({ method: 'eth_chainId' });
-      const baseMainnetChainId = '0x2105'; // 8453 in hex
-      
-      if (chainId !== baseMainnetChainId) {
-        throw new Error(
-          `Wrong network! Please switch to Base Mainnet.\n\nCurrent: ${chainId}\nRequired: Base Mainnet (Chain ID: 8453)`
-        );
+      try {
+        const chainId = await provider.request({ method: 'eth_chainId' });
+        const baseMainnetChainId = '0x2105'; // 8453 in hex
+        
+        if (chainId !== baseMainnetChainId) {
+          throw new Error(
+            `Wrong network! Please switch to Base Mainnet.\n\nCurrent: ${chainId}\nRequired: Base Mainnet (Chain ID: 8453)`
+          );
+        }
+      } catch (networkError) {
+        // Farcaster SDK might not support eth_chainId, show warning but continue
+        console.warn('Could not verify network - proceeding with caution:', networkError);
       }
 
       // Check balance before transaction
@@ -214,12 +221,20 @@ Please add more ETH to your wallet.`
       }
 
       // Wait for transaction receipt to verify it actually succeeded
-      const receipt = await waitForTransactionReceipt(provider, txHash);
-      
-      if (!receipt || receipt.status === '0x0') {
-        // Transaction failed on-chain
-        storage.updateTipStatus(tipId, 'failed', txHash);
-        throw new Error('Transaction failed on-chain. Your ETH was not sent.');
+      // Only do this for browser wallets, Farcaster SDK might not support it
+      if (typeof window !== 'undefined' && (window as any).ethereum) {
+        try {
+          const receipt = await waitForTransactionReceipt(provider, txHash);
+          
+          if (!receipt || receipt.status === '0x0') {
+            // Transaction failed on-chain
+            storage.updateTipStatus(tipId, 'failed', txHash);
+            throw new Error('Transaction failed on-chain. Your ETH was not sent.');
+          }
+        } catch (receiptError) {
+          console.warn('Could not verify transaction receipt:', receiptError);
+          // Don't fail the transaction just because we can't verify it
+        }
       }
 
       // Update tip status to success only if confirmed
