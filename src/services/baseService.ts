@@ -1,6 +1,29 @@
 import { sdk } from '@farcaster/miniapp-sdk';
 import { storage } from '../utils/storage';
 
+// Helper to wait for transaction receipt
+const waitForTransactionReceipt = async (provider: any, txHash: string, maxAttempts = 30): Promise<any> => {
+  for (let i = 0; i < maxAttempts; i++) {
+    try {
+      const receipt = await provider.request({
+        method: 'eth_getTransactionReceipt',
+        params: [txHash]
+      });
+      
+      if (receipt) {
+        return receipt;
+      }
+      
+      // Wait 2 seconds before next attempt
+      await new Promise(resolve => setTimeout(resolve, 2000));
+    } catch (error) {
+      console.error('Error getting receipt:', error);
+    }
+  }
+  
+  throw new Error('Transaction receipt not found after waiting');
+};
+
 // Detect if we're in a browser with wallet support (Baseapp/standard web3)
 const getProvider = () => {
   // Check for browser wallet provider (Baseapp, MetaMask, Coinbase Wallet, etc.)
@@ -81,7 +104,7 @@ export const baseService = {
   },
 
   // Send self-tip transaction on Base Mainnet
-  sendSelfTip: async (amount: string, userAddress: string): Promise<string> => {
+  sendSelfTip: async (amount: string): Promise<string> => {
     try {
       // Get the appropriate provider (Baseapp browser wallet or Farcaster SDK)
       const provider = getProvider();
@@ -112,34 +135,49 @@ export const baseService = {
       }
 
       // Check balance before transaction
-      const balance = await provider.request({
+      const balanceHex = await provider.request({
         method: 'eth_getBalance',
         params: [walletAddress, 'latest']
       });
 
-      const balanceInEth = parseInt(balance, 16) / 1e18;
-      const requestedAmount = parseFloat(amount);
+      const balanceInWei = BigInt(balanceHex);
+      const requestedAmountInWei = BigInt(Math.floor(parseFloat(amount) * 1e18));
+      
+      // Get current gas price
+      const gasPriceHex = await provider.request({ method: 'eth_gasPrice' });
+      const gasPrice = BigInt(gasPriceHex);
+      const estimatedGas = BigInt(21000);
+      const gasCost = gasPrice * estimatedGas;
+      
+      const totalNeeded = requestedAmountInWei + gasCost;
 
-      // Estimate gas (typically ~21000 for simple transfer)
-      const estimatedGas = 21000;
-      const gasPrice = await provider.request({ method: 'eth_gasPrice' });
-      const gasCostInEth = (parseInt(gasPrice, 16) * estimatedGas) / 1e18;
-      const totalNeeded = requestedAmount + gasCostInEth;
+      if (balanceInWei < totalNeeded) {
+        const balanceInEth = Number(balanceInWei) / 1e18;
+        const requestedAmount = parseFloat(amount);
+        const gasCostInEth = Number(gasCost) / 1e18;
+        const totalNeededInEth = Number(totalNeeded) / 1e18;
+        const shortfall = Number(totalNeeded - balanceInWei) / 1e18;
 
-      if (balanceInEth < totalNeeded) {
         throw new Error(
           `Insufficient balance!
 
 Your balance: ${balanceInEth.toFixed(6)} ETH
-Amount needed: ${requestedAmount} ETH
+Amount requested: ${requestedAmount} ETH
 Estimated gas: ${gasCostInEth.toFixed(6)} ETH
-Total required: ${totalNeeded.toFixed(6)} ETH
+Total required: ${totalNeededInEth.toFixed(6)} ETH
 
-You need ${(totalNeeded - balanceInEth).toFixed(6)} more ETH`
+You are short: ${shortfall.toFixed(6)} ETH
+
+Please add more ETH to your wallet.`
         );
       }
 
-      // Create tip record
+      // STRICT CHECK: If balance is exactly 0, reject immediately
+      if (balanceInWei === BigInt(0)) {
+        throw new Error('Your wallet balance is 0 ETH. You cannot send a transaction without any ETH to pay for gas.');
+      }
+
+      // Create tip record with pending status
       const tipId = Date.now().toString();
       storage.addTipToHistory({
         id: tipId,
@@ -149,22 +187,42 @@ You need ${(totalNeeded - balanceInEth).toFixed(6)} more ETH`
         status: 'pending'
       });
 
-      // Convert amount to wei
-      const amountInWei = (parseFloat(amount) * 1e18).toString(16);
+      // Convert amount to hex
+      const amountInWei = requestedAmountInWei.toString(16);
 
       // Send transaction TO SELF (complete refund minus gas)
-      // This is a self-transfer: wallet sends to itself
-      const txHash = await provider.request({
-        method: 'eth_sendTransaction',
-        params: [{
-          from: walletAddress,
-          to: walletAddress, // Send to SELF for complete refund
-          value: `0x${amountInWei}`,
-          gas: '0x5208', // 21000 in hex
-        }]
-      });
+      let txHash: string;
+      try {
+        txHash = await provider.request({
+          method: 'eth_sendTransaction',
+          params: [{
+            from: walletAddress,
+            to: walletAddress, // Send to SELF for complete refund
+            value: `0x${amountInWei}`,
+            gas: '0x5208', // 21000 in hex
+          }]
+        });
+      } catch (txError: any) {
+        // Update tip status to failed
+        storage.updateTipStatus(tipId, 'failed');
+        
+        // Parse and throw user-friendly error
+        if (txError.message?.includes('insufficient funds')) {
+          throw new Error('Transaction rejected: Insufficient funds for gas + amount');
+        }
+        throw new Error(`Transaction failed: ${txError.message || 'Unknown error'}`);
+      }
 
-      // Update tip status
+      // Wait for transaction receipt to verify it actually succeeded
+      const receipt = await waitForTransactionReceipt(provider, txHash);
+      
+      if (!receipt || receipt.status === '0x0') {
+        // Transaction failed on-chain
+        storage.updateTipStatus(tipId, 'failed', txHash);
+        throw new Error('Transaction failed on-chain. Your ETH was not sent.');
+      }
+
+      // Update tip status to success only if confirmed
       storage.updateTipStatus(tipId, 'success', txHash);
 
       return txHash;

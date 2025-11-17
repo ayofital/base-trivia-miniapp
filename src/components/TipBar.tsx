@@ -24,8 +24,8 @@ export const TipBar: React.FC = () => {
         throw new Error('User not connected. Please open this app in a Farcaster client.');
       }
 
-      // Pass empty string as userAddress - baseService will get wallet from SDK context
-      const hash = await baseService.sendSelfTip(amount, '');
+      // Pass only the amount - user sends to themselves
+      const hash = await baseService.sendSelfTip(amount);
       setTxHash(hash);
     } catch (err) {
       setError((err as Error).message);
