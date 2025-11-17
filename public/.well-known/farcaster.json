@@ -1,0 +1,33 @@
+{
+  "accountAssociation": {
+    "header": "",
+    "payload": "",
+    "signature": ""
+  },
+  "baseBuilder": {
+    "ownerAddress": "0x"
+  },
+  "miniapp": {
+    "version": "1",
+    "name": "Base Trivia",
+    "homeUrl": "https://your-domain.com",
+    "iconUrl": "https://your-domain.com/icon.png",
+    "splashImageUrl": "https://your-domain.com/splash.png",
+    "splashBackgroundColor": "#1e40af",
+    "webhookUrl": "",
+    "subtitle": "Test your knowledge daily",
+    "description": "Challenge yourself with 5 random trivia questions. Play once every 24 hours and tip yourself on Base!",
+    "screenshotUrls": [
+      "https://your-domain.com/screenshot1.png",
+      "https://your-domain.com/screenshot2.png"
+    ],
+    "primaryCategory": "social",
+    "tags": ["trivia", "game", "base", "web3"],
+    "heroImageUrl": "https://your-domain.com/hero.png",
+    "tagline": "Daily trivia challenge",
+    "ogTitle": "Base Trivia Mini App",
+    "ogDescription": "Test your knowledge with 5 random trivia questions daily!",
+    "ogImageUrl": "https://your-domain.com/og-image.png",
+    "noindex": false
+  }
+}

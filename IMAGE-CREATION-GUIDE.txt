@@ -1,0 +1,380 @@
+IMAGE CREATION GUIDE FOR BASE TRIVIA
+====================================
+
+REQUIRED IMAGES CHECKLIST
+-------------------------
+
+You need to create the following images before deploying:
+
+1. ✓ embed-image.png (600×400px) - Social embed
+2. ✓ icon.png (192×192px) - App icon
+3. ✓ splash.png (600×400px) - Loading screen
+4. ✓ hero.png (1200×630px) - Store hero image
+5. ✓ og-image.png (1200×630px) - Open Graph
+6. ✓ screenshot1.png (750×1334px) - App screenshot 1
+7. ✓ screenshot2.png (750×1334px) - App screenshot 2
+
+
+DETAILED SPECIFICATIONS
+-----------------------
+
+1. EMBED IMAGE (embed-image.png)
+   Size: 600×400px (minimum) to 3000×2000px (maximum)
+   Aspect Ratio: 3:2 (required)
+   Format: PNG (recommended), JPG, GIF, WebP
+   Max File Size: 10MB
+   
+   Content Suggestions:
+   - App name "Base Trivia"
+   - Emoji or icon (🎯)
+   - Purple gradient background (#667eea to #764ba2)
+   - Tagline: "Test Your Knowledge Daily"
+   - Clean, readable text
+   
+   This image appears when your app is shared on Farcaster.
+
+2. APP ICON (icon.png)
+   Size: 192×192px (recommended), can be up to 512×512px
+   Aspect Ratio: 1:1 (square)
+   Format: PNG with transparent background
+   
+   Content Suggestions:
+   - Simple, recognizable symbol
+   - Target emoji 🎯 or trivia icon
+   - Purple circle with white symbol
+   - Should look good at small sizes
+   
+   This appears as the app icon in lists and navigation.
+
+3. SPLASH SCREEN (splash.png)
+   Size: 600×400px
+   Aspect Ratio: 3:2
+   Format: PNG
+   Background: Should match splashBackgroundColor (#1e40af)
+   
+   Content Suggestions:
+   - "Base Trivia" centered
+   - Loading animation suggestion
+   - Simple and fast-loading
+   - Matches app branding
+   
+   Users see this while your app loads.
+
+4. HERO IMAGE (hero.png)
+   Size: 1200×630px
+   Aspect Ratio: 1.91:1 (close to 16:9)
+   Format: PNG or JPG
+   
+   Content Suggestions:
+   - Feature showcase
+   - App screenshot mockup
+   - Key features listed
+   - Compelling visual
+   
+   Used in app store and promotional materials.
+
+5. OPEN GRAPH IMAGE (og-image.png)
+   Size: 1200×630px
+   Aspect Ratio: 1.91:1
+   Format: PNG or JPG
+   
+   Content Suggestions:
+   - Can be same as hero image
+   - App name and description
+   - Visual appeal for social sharing
+   
+   Shows when app URL is shared outside Farcaster.
+
+6. SCREENSHOTS (screenshot1.png, screenshot2.png)
+   Size: 750×1334px (iPhone 8 dimensions)
+   Aspect Ratio: 9:16 (portrait)
+   Format: PNG
+   
+   Content Suggestions:
+   Screenshot 1: Quiz question screen
+   - Show a trivia question
+   - Multiple choice answers
+   - Progress counter
+   
+   Screenshot 2: Score screen
+   - Final score display
+   - Share button visible
+   - Tip bar (optional)
+   
+   These help users understand what your app does.
+
+
+DESIGN TOOLS
+-----------
+
+Free Options:
+1. Canva (https://canva.com)
+   - Templates available
+   - Easy drag-and-drop
+   - Export as PNG
+   
+2. Figma (https://figma.com)
+   - Professional design tool
+   - Free for personal use
+   - Vector graphics
+   
+3. Photopea (https://photopea.com)
+   - Browser-based
+   - Photoshop alternative
+   - Free
+
+4. GIMP (https://gimp.org)
+   - Desktop app
+   - Open source
+   - Advanced features
+
+Quick Tools:
+- Microsoft Paint (Windows)
+- Preview (Mac)
+- Online image editors
+
+
+COLOR PALETTE
+------------
+
+Use these colors from the app:
+
+Primary Gradient:
+- Start: #667eea (Blue-Purple)
+- End: #764ba2 (Purple)
+
+Accent Colors:
+- Success Green: #10b981
+- Error Red: #ef4444
+- Background White: #ffffff
+- Text Dark: #1f2937
+- Text Gray: #6b7280
+
+Keep it consistent with the app design!
+
+
+QUICK MOCKUP GUIDE
+-----------------
+
+For Embed Image (600×400px):
+1. Create 600×400px canvas
+2. Fill with purple gradient
+3. Add "🎯 Base Trivia" centered
+4. Add subtitle "Test Your Knowledge"
+5. Export as PNG
+
+For Icon (192×192px):
+1. Create 192×192px canvas
+2. Draw purple circle
+3. Add white "?" or target symbol
+4. Export as PNG with transparency
+
+For Splash (600×400px):
+1. Create 600×400px canvas
+2. Fill with #1e40af blue
+3. Add "Base Trivia" white text
+4. Add small loading dots
+5. Export as PNG
+
+For Screenshots:
+1. Take actual app screenshots
+2. Run app at http://localhost:3000
+3. Open DevTools (F12)
+4. Set device to iPhone 8 (375×667)
+5. Take screenshot of:
+   - Question screen
+   - Score screen
+6. Resize to 750×1334 (2x scale)
+
+
+TEXT SUGGESTIONS
+---------------
+
+App Name:
+"Base Trivia" or "🎯 Base Trivia"
+
+Taglines:
+- "Test Your Knowledge Daily"
+- "Daily Trivia Challenge"
+- "Quiz • Score • Share"
+- "5 Questions, Endless Fun"
+
+Features to Highlight:
+- "5 Random Questions"
+- "Share Your Score"
+- "Play Daily"
+- "Tip on Base"
+
+
+FONT RECOMMENDATIONS
+-------------------
+
+If creating images with text:
+- Use Lexend (same as app)
+- Or similar: Inter, Work Sans, DM Sans
+- Keep it clean and readable
+- Bold for headings, regular for body
+
+
+PLACEHOLDERS (TEMPORARY)
+-----------------------
+
+If you need to deploy before creating images, use:
+- Solid color backgrounds with text
+- Simple gradients
+- Text-only designs
+- Generic shapes
+
+But replace with proper images as soon as possible!
+
+
+FILE NAMING
+----------
+
+Exact names required:
+✓ embed-image.png (not embedImage or embed_image)
+✓ icon.png (lowercase)
+✓ splash.png (lowercase)
+✓ hero.png
+✓ og-image.png
+✓ screenshot1.png (not screenshot-1)
+✓ screenshot2.png
+
+Place in: public/ folder
+
+
+UPLOAD INSTRUCTIONS
+------------------
+
+1. Create images using tools above
+2. Save with exact filenames
+3. Place in public/ folder:
+   
+   public/
+   ├── embed-image.png
+   ├── icon.png
+   ├── splash.png
+   ├── hero.png
+   ├── og-image.png
+   ├── screenshot1.png
+   └── screenshot2.png
+
+4. Rebuild app: npm run build
+5. Redeploy to hosting
+
+
+VERIFICATION
+-----------
+
+After uploading, verify images load:
+✓ https://your-domain.com/embed-image.png
+✓ https://your-domain.com/icon.png
+✓ https://your-domain.com/splash.png
+✓ https://your-domain.com/hero.png
+✓ https://your-domain.com/og-image.png
+✓ https://your-domain.com/screenshot1.png
+✓ https://your-domain.com/screenshot2.png
+
+All should load without 404 errors.
+
+
+OPTIMIZATION
+-----------
+
+Before uploading:
+1. Compress images (use tinypng.com)
+2. Keep file sizes small
+3. Use PNG for graphics, JPG for photos
+4. Ensure quality is good at target size
+
+Tools:
+- TinyPNG (https://tinypng.com)
+- Squoosh (https://squoosh.app)
+- ImageOptim (Mac)
+
+
+QUICK CHECKLIST
+--------------
+
+□ All 7 images created
+□ Correct dimensions
+□ Correct aspect ratios
+□ Proper file names
+□ Placed in public/ folder
+□ Colors match app theme
+□ Text is readable
+□ File sizes optimized
+□ Uploaded to hosting
+□ URLs verified
+
+
+EXAMPLE URLS
+-----------
+
+After deployment, update these in your config files:
+
+farcaster.json:
+"iconUrl": "https://your-domain.com/icon.png"
+"splashImageUrl": "https://your-domain.com/splash.png"
+"heroImageUrl": "https://your-domain.com/hero.png"
+"ogImageUrl": "https://your-domain.com/og-image.png"
+"screenshotUrls": [
+  "https://your-domain.com/screenshot1.png",
+  "https://your-domain.com/screenshot2.png"
+]
+
+index.html:
+"imageUrl": "https://your-domain.com/embed-image.png"
+
+
+TIPS FOR SUCCESS
+---------------
+
+✓ Keep designs simple and clean
+✓ Use app colors for consistency
+✓ Make text large and readable
+✓ Test at actual sizes
+✓ Get feedback before finalizing
+✓ Compress for fast loading
+✓ Use high contrast for readability
+
+
+COMMON MISTAKES
+--------------
+
+✗ Wrong dimensions
+✗ Wrong aspect ratios
+✗ File names with uppercase
+✗ Files not in public/ folder
+✗ Images too large (slow loading)
+✗ Text too small to read
+✗ Colors don't match app
+✗ Forgot to redeploy after adding
+
+
+NEED INSPIRATION?
+----------------
+
+Look at other Farcaster Mini Apps:
+1. Visit Base app
+2. Browse Mini Apps section
+3. Note what works visually
+4. Adapt ideas for your app
+
+Search "Mini App Icons" on:
+- Dribbble
+- Behance
+- Pinterest
+
+
+READY TO CREATE!
+---------------
+
+Tools: Canva, Figma, or Photopea
+Colors: #667eea to #764ba2 gradient
+Font: Lexend or similar
+Text: "🎯 Base Trivia"
+
+Create → Save → Upload → Verify → Deploy
+
+Good luck! 🎨

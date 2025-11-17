@@ -1,0 +1,177 @@
+BASE TRIVIA MINI APP - QUICK START
+==================================
+
+🚀 GET RUNNING IN 3 STEPS
+-------------------------
+
+1. INSTALL & RUN LOCALLY
+   npm install
+   npm run dev
+   → Open http://localhost:3000
+
+2. BUILD FOR PRODUCTION
+   npm run build
+   → Creates dist/ folder
+
+3. DEPLOY
+   - Push to GitHub
+   - Deploy to Vercel/Netlify
+   - Update URLs in farcaster.json and index.html
+
+
+📋 ESSENTIAL FILES TO UPDATE
+----------------------------
+
+Before deploying, replace these:
+
+1. public/.well-known/farcaster.json
+   ❌ "https://your-domain.com" (all instances)
+   ✅ "https://your-actual-domain.com"
+   
+   ❌ "0x" (ownerAddress)
+   ✅ "0xYourBaseWalletAddress"
+
+2. index.html
+   ❌ "https://your-domain.com" (in fc:miniapp meta)
+   ✅ "https://your-actual-domain.com"
+
+
+🎨 CREATE REQUIRED IMAGES
+--------------------------
+
+Upload to public/ folder:
+- embed-image.png (600×400px, 3:2 ratio)
+- icon.png (192×192px)
+- splash.png (600×400px)
+
+
+🔗 AFTER DEPLOYMENT
+-------------------
+
+1. Generate Account Association
+   → Go to: https://www.base.dev/
+   → Enter your domain
+   → Copy credentials to farcaster.json
+   → Redeploy
+
+2. Test Your App
+   → Go to: https://www.base.dev/preview
+   → Enter your URL
+   → Click Launch
+
+3. Publish to Farcaster
+   → Create post with your URL
+   → Embed appears automatically
+   → Users can launch directly
+
+
+⚙️ COMMON CUSTOMIZATIONS
+-------------------------
+
+Change Question Count:
+📁 src/services/triviaService.ts
+Line 4: amount=5 → amount=10
+
+Change Cooldown Period:
+📁 src/utils/storage.ts
+Line 23: hoursSinceLastPlay >= 24 → >= 48 (for 48 hours)
+
+Change Colors:
+📁 src/App.css
+Lines 15-16: Update gradient colors
+
+Change Developer Wallet (to receive tips):
+📁 src/components/TipBar.tsx
+Line 27: Replace userAddress with "0xYourAddress"
+
+
+🐛 TROUBLESHOOTING
+------------------
+
+Problem: TypeScript errors
+Solution: npm install (dependencies missing)
+
+Problem: Questions won't load
+Solution: Check internet, API might be rate limited
+
+Problem: Wallet not connecting
+Solution: Must test in Base app, not regular browser
+
+Problem: Images 404
+Solution: Put images in public/ folder and rebuild
+
+Problem: Can't play again
+Solution: Clear localStorage or wait 24 hours
+
+
+📦 PROJECT STRUCTURE
+--------------------
+
+src/
+  components/    ← UI components
+  hooks/         ← Custom React hooks
+  services/      ← API & blockchain logic
+  types/         ← TypeScript interfaces
+  utils/         ← Helper functions
+  App.tsx        ← Main app
+  App.css        ← All styles
+
+public/
+  .well-known/
+    farcaster.json  ← Mini app config
+
+
+🔧 NPM COMMANDS
+---------------
+
+npm run dev      → Start dev server (port 3000)
+npm run build    → Build for production
+npm run preview  → Preview production build
+
+
+✅ PRE-DEPLOYMENT CHECKLIST
+---------------------------
+
+□ All images created and uploaded
+□ farcaster.json URLs updated
+□ index.html meta tags updated
+□ Base wallet address added
+□ Built with npm run build
+□ Tested locally with npm run preview
+□ Deployed to hosting
+□ Account association generated
+□ Tested with Base Build preview tool
+□ Ready to publish!
+
+
+📚 FULL DOCUMENTATION
+---------------------
+
+SETUP.txt              → Complete feature list & local setup
+DEPLOYMENT.txt         → Step-by-step deployment guide
+API-BLOCKCHAIN-GUIDE.txt → Technical integration details
+
+
+🆘 NEED HELP?
+-------------
+
+1. Check console for errors (F12)
+2. Verify all URLs match your domain
+3. Test API: https://opentdb.com/api.php?amount=5&type=multiple
+4. Read error messages carefully
+5. Check Farcaster docs: https://miniapps.farcaster.xyz/
+
+
+🎯 THAT'S IT!
+-------------
+
+You now have a fully functional trivia mini app ready to deploy.
+
+Questions load ✓
+Scoring works ✓
+Share to Farcaster ✓
+24-hour cooldown ✓
+Self-tip on Base ✓
+Beautiful UI ✓
+
+Deploy and share! 🚀

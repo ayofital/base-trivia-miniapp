@@ -1,0 +1,207 @@
+BASE TRIVIA MINI APP - COMPLETE SETUP GUIDE
+==========================================
+
+PROJECT OVERVIEW
+--------------
+A fully functional Dynamic Trivia Mini App built for the Farcaster/Base Mini Apps platform.
+
+FEATURES
+--------
+✓ Fetches 5 random trivia questions from Open Trivia DB API
+✓ Multiple-choice format with correct/wrong feedback
+✓ Progress counter (Question X of 5)
+✓ Final score screen with percentage
+✓ Share to Farcaster functionality
+✓ 24-hour play cooldown (localStorage)
+✓ Self-tip feature on Base blockchain
+✓ Tip history tracking
+✓ Error handling and retry mechanism
+✓ Clean animations and Lexend font
+✓ Responsive design (424px × 695px for web)
+
+TECH STACK
+----------
+- React 18
+- TypeScript
+- Vite
+- Farcaster Mini App SDK
+- Base blockchain integration
+- Open Trivia DB API
+
+FILE STRUCTURE
+--------------
+src/
+  ├── components/
+  │   ├── QuestionCard.tsx    - Displays trivia questions
+  │   ├── ScoreScreen.tsx      - Shows final score
+  │   └── TipBar.tsx           - Self-tip functionality
+  ├── hooks/
+  │   └── useTrivia.ts         - Quiz logic hook
+  ├── services/
+  │   ├── triviaService.ts     - API calls
+  │   └── baseService.ts       - SDK & blockchain
+  ├── types/
+  │   └── index.ts             - TypeScript types
+  ├── utils/
+  │   └── storage.ts           - localStorage utilities
+  ├── App.tsx                  - Main app component
+  ├── App.css                  - Styles with animations
+  └── main.tsx                 - Entry point
+
+public/
+  └── .well-known/
+      └── farcaster.json       - Mini App manifest
+
+RUNNING LOCALLY
+--------------
+1. Install dependencies:
+   npm install
+
+2. Start development server:
+   npm run dev
+
+3. Open browser to:
+   http://localhost:3000
+
+4. Test all features:
+   - Answer trivia questions
+   - View score and share
+   - Try self-tip (requires wallet)
+   - Wait for cooldown
+
+BUILDING FOR PRODUCTION
+-----------------------
+1. Build the app:
+   npm run build
+
+2. Preview production build:
+   npm run preview
+
+3. Deploy dist/ folder to your hosting service
+
+DEPLOYING TO BASE APP
+---------------------
+1. Deploy to hosting (Vercel, Netlify, etc.)
+
+2. Update farcaster.json with your domain:
+   - Replace all "https://your-domain.com" URLs
+   - Add your Base account address in baseBuilder.ownerAddress
+
+3. Update index.html meta tags:
+   - Replace imageUrl with your embed image URL (600x400px, 3:2 ratio)
+   - Update app name and URL
+
+4. Generate accountAssociation credentials:
+   - Visit: https://www.base.dev/
+   - Navigate to Account Association tool
+   - Enter your domain and generate credentials
+   - Paste into farcaster.json
+
+5. Create embed image:
+   - Size: 600x400px minimum (3:2 aspect ratio)
+   - Upload to /public/embed-image.png
+   - Or use external CDN
+
+6. Test your app:
+   - Visit: https://www.base.dev/preview
+   - Enter your app URL
+   - Verify embed and launch
+
+7. Publish:
+   - Create a post in Base app
+   - Include your app URL
+   - Your app will appear as a Mini App
+
+CUSTOMIZATION
+------------
+1. Change developer wallet address:
+   - In TipBar.tsx, the default is self-transfer
+   - Modify userAddress in handleSendTip if needed
+
+2. Adjust quiz settings:
+   - Change question count in triviaService.ts (TRIVIA_API_URL)
+   - Modify cooldown period in storage.ts (24 hours default)
+
+3. Update colors:
+   - Primary gradient: #667eea to #764ba2
+   - Edit in App.css
+
+4. Change fonts:
+   - Replace Lexend in index.html
+   - Update font-family in App.css
+
+IMPORTANT NOTES
+--------------
+- Dimensions: 424px width × 695px height (web specification)
+- The app uses localStorage for cooldown tracking
+- Self-tip requires Base wallet connection via SDK
+- Trivia API may rate limit - retry mechanism included
+- All images in public/ need to be created/uploaded
+- accountAssociation fields must be generated after deployment
+
+TESTING TIPS
+-----------
+1. Clear localStorage to reset cooldown:
+   - Open DevTools > Application > Local Storage
+   - Delete trivia_quiz_session
+
+2. Test without internet:
+   - Should show error screen with retry button
+
+3. Test wallet features:
+   - Requires actual wallet connection
+   - Use Base testnet for testing
+
+4. Mobile testing:
+   - Responsive on mobile devices
+   - Adjust viewport in DevTools
+
+API ENDPOINTS
+------------
+- Trivia: https://opentdb.com/api.php?amount=5&type=multiple
+- Base Chain ID: 8453 (mainnet)
+- BaseScan: https://basescan.org
+
+TROUBLESHOOTING
+--------------
+1. If SDK errors appear:
+   - Ensure @farcaster/miniapp-sdk is installed
+   - Check network connectivity
+
+2. If questions don't load:
+   - Check Open Trivia DB status
+   - Verify retry mechanism works
+
+3. If cooldown doesn't work:
+   - Clear localStorage and test again
+
+4. If tips fail:
+   - Ensure wallet is connected
+   - Check Base network connection
+   - Verify sufficient ETH balance
+
+NEXT STEPS
+---------
+1. Create and upload all image assets
+2. Deploy to hosting provider
+3. Update all URLs in farcaster.json
+4. Generate accountAssociation
+5. Test with Base Build Preview tool
+6. Publish to Farcaster
+
+RESOURCES
+--------
+- Farcaster Docs: https://miniapps.farcaster.xyz/
+- Base Docs: https://docs.base.org/mini-apps/
+- Open Trivia DB: https://opentdb.com/
+- Base Build: https://www.base.dev/
+
+SUPPORT
+-------
+For issues:
+1. Check browser console for errors
+2. Verify all URLs are updated
+3. Test API endpoints manually
+4. Check wallet connection status
+
+Enjoy your Base Trivia Mini App! 🎯

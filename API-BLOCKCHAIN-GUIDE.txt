@@ -1,0 +1,462 @@
+BASE TRIVIA - API & BLOCKCHAIN INTEGRATION GUIDE
+=================================================
+
+TRIVIA API INTEGRATION
+---------------------
+
+API Provider: Open Trivia Database (OpenTDB)
+Endpoint: https://opentdb.com/api.php
+
+Current Configuration:
+- Amount: 5 questions per session
+- Type: Multiple choice only
+- Categories: Random (all categories)
+
+API Response Format:
+{
+  "response_code": 0,
+  "results": [
+    {
+      "category": "Entertainment: Video Games",
+      "type": "multiple",
+      "difficulty": "medium",
+      "question": "What is the name...",
+      "correct_answer": "Answer",
+      "incorrect_answers": ["Wrong1", "Wrong2", "Wrong3"]
+    }
+  ]
+}
+
+Response Codes:
+- 0: Success
+- 1: No Results (invalid parameters)
+- 2: Invalid Parameter
+- 3: Token Not Found
+- 4: Token Empty (session exhausted)
+
+Customization Options:
+1. Change question count:
+   - Edit TRIVIA_API_URL in src/services/triviaService.ts
+   - Change amount=5 to desired number (max 50)
+
+2. Filter by category:
+   - Add &category=X parameter
+   - Categories:
+     9: General Knowledge
+     10: Entertainment: Books
+     11: Entertainment: Film
+     17: Science & Nature
+     18: Science: Computers
+     21: Sports
+     22: Geography
+     23: History
+     Full list: https://opentdb.com/api_category.php
+
+3. Set difficulty:
+   - Add &difficulty=easy (or medium, hard)
+
+4. Change question type:
+   - type=multiple (current)
+   - type=boolean (true/false)
+
+Example Custom URLs:
+- Easy questions: ?amount=5&difficulty=easy&type=multiple
+- Computer questions: ?amount=5&category=18&type=multiple
+- True/False: ?amount=5&type=boolean
+
+API Features:
+✓ HTML entity encoding (handled by decodeHTML utility)
+✓ Free to use (no API key required)
+✓ Rate limiting: ~5 seconds between requests (retry mechanism included)
+✓ Fallback questions (can add your own if API fails)
+
+Error Handling:
+- Network errors: Retry up to 3 times with exponential backoff
+- API errors: Show error screen with retry button
+- No questions: Display fallback message
+
+LOCAL STORAGE IMPLEMENTATION
+---------------------------
+
+Storage Keys:
+1. trivia_quiz_session
+   - Stores last play timestamp
+   - Tracks score and questions count
+   - Used for 24-hour cooldown
+
+2. trivia_tip_history
+   - Stores last 10 tip transactions
+   - Includes amount, timestamp, status, txHash
+
+Session Data Structure:
+{
+  "score": 4,
+  "totalQuestions": 5,
+  "lastPlayedAt": "2025-11-17T10:30:00.000Z"
+}
+
+Tip History Structure:
+[
+  {
+    "id": "1731849000000",
+    "amount": "0.001",
+    "timestamp": "2025-11-17T10:30:00.000Z",
+    "txHash": "0x...",
+    "status": "success"
+  }
+]
+
+Cooldown Logic:
+- Calculates hours since last play
+- Requires 24 hours between sessions
+- Shows countdown timer
+- Can be reset by clearing localStorage
+
+To Modify Cooldown:
+Edit src/utils/storage.ts, line ~23:
+return hoursSinceLastPlay >= 24; // Change 24 to desired hours
+
+
+BASE BLOCKCHAIN INTEGRATION
+---------------------------
+
+Network Details:
+- Chain ID: 8453 (Base Mainnet)
+- Chain Name: Base
+- RPC URL: https://mainnet.base.org
+- Block Explorer: https://basescan.org
+- Currency: ETH (on Base L2)
+
+For Testing:
+- Chain ID: 84532 (Base Sepolia Testnet)
+- Faucet: https://www.coinbase.com/faucets/base-ethereum-goerli-faucet
+
+FARCASTER MINI APP SDK
+---------------------
+
+Installed Package: @farcaster/miniapp-sdk
+
+Key SDK Functions Used:
+
+1. sdk.actions.ready()
+   - Called when app loads
+   - Hides splash screen
+   - Shows your app
+
+2. sdk.context
+   - Returns user context
+   - Includes wallet address
+   - User profile data
+
+3. sdk.wallet.sendTransaction()
+   - Initiates blockchain transaction
+   - Parameters:
+     * to: recipient address
+     * value: amount in hex (wei)
+     * chainId: 8453 (Base)
+
+4. sdk.actions.openUrl()
+   - Opens URLs in-app
+   - Used for Farcaster sharing
+
+SDK Integration Points:
+- App.tsx: Initializes SDK on mount
+- baseService.ts: All SDK interactions
+- TipBar.tsx: Transaction UI
+
+SELF-TIP TRANSACTION FLOW
+-------------------------
+
+Step-by-step process:
+
+1. User clicks "Send Tip" button
+2. App validates amount > 0
+3. Gets user context from SDK
+4. Checks wallet connection
+5. Converts ETH to wei (amount * 10^18)
+6. Creates pending tip record in localStorage
+7. Calls sdk.wallet.sendTransaction()
+8. SDK shows transaction preview to user
+9. User confirms in wallet
+10. Transaction submitted to Base network
+11. Returns transaction hash
+12. Updates tip status to "success"
+13. Stores txHash in localStorage
+14. Shows success message with BaseScan link
+
+Transaction Parameters:
+{
+  to: "0x..." // User's own address (self-tip)
+  value: "0x..." // Amount in hex wei
+  chainId: 8453 // Base mainnet
+}
+
+Example Amounts:
+- 0.001 ETH = 1000000000000000 wei = 0x38D7EA4C68000
+- 0.01 ETH = 10000000000000000 wei = 0x2386F26FC10000
+- 0.1 ETH = 100000000000000000 wei = 0x16345785D8A0000
+
+Gas Fees:
+- Paid by user in addition to tip amount
+- Base fees are typically very low (~$0.01-0.05)
+- Estimated automatically by wallet
+
+WALLET CONNECTION
+----------------
+
+Connection Flow:
+1. User opens app in Base app/Warpcast
+2. SDK automatically provides wallet context
+3. No separate "connect wallet" step needed
+4. Wallet is already connected through Farcaster
+
+Wallet Context Includes:
+- address: User's wallet address
+- fid: Farcaster ID
+- username: Farcaster username
+- pfp: Profile picture URL
+
+Testing Without Wallet:
+- App will show "Wallet not connected" error
+- Use actual Base app for testing wallet features
+- Desktop browsers won't have wallet access
+
+TRANSACTION SECURITY
+-------------------
+
+Default Behavior:
+✓ Self-transfer only (to = from)
+✓ User approves each transaction
+✓ Amount limited by user's balance
+✓ Transaction preview shown before confirmation
+✓ All transactions on-chain and verifiable
+
+Developer Customization:
+To receive tips as developer instead:
+
+In src/components/TipBar.tsx, modify handleSendTip:
+```typescript
+// Current (self-tip):
+const hash = await baseService.sendSelfTip(amount, userAddress);
+
+// To receive tips:
+const DEVELOPER_ADDRESS = "0xYourAddressHere";
+const hash = await baseService.sendSelfTip(amount, DEVELOPER_ADDRESS);
+```
+
+⚠️ IMPORTANT: Always make this clear to users!
+
+SHARE TO FARCASTER
+-----------------
+
+Implementation:
+1. User clicks "Share to Farcaster"
+2. Creates share text with score
+3. Opens Warpcast composer with pre-filled text
+4. User can edit before posting
+
+Share URL Format:
+https://warpcast.com/~/compose?text={encoded_text}
+
+Example Share Text:
+"Just scored 4/5 on Base Trivia! 🎯
+
+Can you beat my score?"
+
+The share will include your app's embed automatically.
+
+MANIFEST FILE (farcaster.json)
+-----------------------------
+
+Location: public/.well-known/farcaster.json
+
+Critical Fields:
+- accountAssociation: Verifies domain ownership
+- baseBuilder.ownerAddress: Your Base account address
+- miniapp.homeUrl: Your app's production URL
+- miniapp.iconUrl: App icon (192x192px)
+- miniapp.splashImageUrl: Loading screen (600x400px)
+
+Field Specifications:
+- version: Always "1"
+- name: Max 30 characters
+- subtitle: Max 60 characters
+- description: Max 200 characters
+- tags: Array of strings (max 5)
+- primaryCategory: One of: social, game, defi, nft, utility
+
+EMBED METADATA
+--------------
+
+Location: index.html <head>
+
+Required Meta Tag:
+<meta name="fc:miniapp" content='{
+  "version":"next",
+  "imageUrl":"https://your-domain.com/embed.png",
+  "button":{
+    "title":"Play Trivia",
+    "action":{
+      "type":"launch_miniapp",
+      "name":"Base Trivia",
+      "url":"https://your-domain.com"
+    }
+  }
+}' />
+
+Embed Image Requirements:
+- Aspect ratio: 3:2 (e.g., 600x400px)
+- Min size: 600x400px
+- Max size: 3000x2000px
+- File size: < 10MB
+- Format: PNG (recommended), JPG, GIF, WebP
+
+Button Text:
+- Keep under 20 characters
+- Action-oriented (Play, Start, Launch)
+- Clear and compelling
+
+TESTING CHECKLIST
+----------------
+
+API Testing:
+☐ Questions load successfully
+☐ HTML entities decode properly
+☐ Answers shuffle randomly
+☐ Retry mechanism works on failure
+☐ Error messages display correctly
+
+Storage Testing:
+☐ Session saves after quiz completion
+☐ 24-hour cooldown activates
+☐ Countdown timer shows correctly
+☐ Can play again after 24 hours
+☐ Tip history persists
+
+Blockchain Testing:
+☐ Wallet context loads
+☐ Transaction preview appears
+☐ Amount converts to wei correctly
+☐ Transaction submits successfully
+☐ TxHash returns and saves
+☐ BaseScan link works
+☐ Gas fees calculated correctly
+
+SDK Testing:
+☐ App initializes without errors
+☐ Ready event fires
+☐ User context available
+☐ Share URL opens correctly
+☐ Farcaster composer loads
+
+MONITORING & ANALYTICS
+---------------------
+
+Recommended Tracking:
+1. API Success Rate
+   - Monitor fetch failures
+   - Track retry attempts
+
+2. Transaction Success Rate
+   - Count successful tips
+   - Monitor failures and reasons
+
+3. User Engagement
+   - Quiz completion rate
+   - Average score
+   - Share rate
+   - Return rate after 24h
+
+4. Performance
+   - API response time
+   - App load time
+   - Transaction time
+
+Tools to Use:
+- Vercel Analytics (included)
+- Google Analytics
+- Sentry for error tracking
+- Custom logging service
+
+ERROR MESSAGES
+-------------
+
+User-Facing Errors:
+1. "Failed to load questions"
+   - API down or rate limited
+   - Show retry button
+
+2. "Wallet not connected"
+   - SDK context unavailable
+   - Instruct to use Base app
+
+3. "Transaction failed"
+   - User rejected
+   - Insufficient funds
+   - Network error
+
+4. "You've already played today"
+   - Cooldown active
+   - Show countdown
+
+All errors logged to console for debugging.
+
+ADVANCED CUSTOMIZATION
+---------------------
+
+Add Question Categories:
+1. Create category selector UI
+2. Modify API call with category parameter
+3. Store category preference
+
+Add Leaderboard:
+1. Set up backend database
+2. Submit scores after quiz
+3. Display top scores
+
+Multiple Difficulty Levels:
+1. Add difficulty selector
+2. Adjust API parameter
+3. Award different points
+
+TROUBLESHOOTING
+--------------
+
+Q: API returns no questions?
+A: Check rate limiting, try different parameters
+
+Q: Wallet transactions fail?
+A: Verify Base network, check user balance
+
+Q: Images not loading?
+A: Ensure public/ folder deployed correctly
+
+Q: SDK errors in console?
+A: Only works in Farcaster apps, not regular browsers
+
+Q: Cooldown not working?
+A: Check localStorage permissions, date handling
+
+USEFUL RESOURCES
+---------------
+
+APIs:
+- OpenTDB: https://opentdb.com
+- Alternative: TriviaAPI.com
+
+Base:
+- Docs: https://docs.base.org
+- Explorer: https://basescan.org
+- Bridge: https://bridge.base.org
+
+Farcaster:
+- Mini Apps Spec: https://miniapps.farcaster.xyz
+- SDK Docs: https://github.com/farcasterxyz/miniapp-sdk
+- Base Build: https://www.base.dev
+
+Development:
+- Vite Docs: https://vitejs.dev
+- React Docs: https://react.dev
+- TypeScript: https://www.typescriptlang.org
+
+Ready to customize and deploy! 🚀

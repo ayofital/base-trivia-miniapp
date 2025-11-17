@@ -1,0 +1,220 @@
+DEPLOYMENT CHECKLIST FOR BASE TRIVIA MINI APP
+============================================
+
+BEFORE DEPLOYMENT
+-----------------
+☐ 1. Create image assets (all must be publicly accessible):
+   - embed-image.png (600x400px, 3:2 ratio) - for social sharing
+   - icon.png (192x192px recommended) - app icon
+   - splash.png (600x400px) - loading splash screen
+   - hero.png (1200x630px) - hero image for store
+   - og-image.png (1200x630px) - Open Graph image
+   - screenshot1.png, screenshot2.png (750x1334px) - app screenshots
+
+☐ 2. Choose hosting provider:
+   - Vercel (recommended for Vite/React)
+   - Netlify
+   - Cloudflare Pages
+   - GitHub Pages
+
+STEP 1: DEPLOY TO HOSTING
+--------------------------
+Using Vercel (recommended):
+
+1. Push code to GitHub
+2. Visit vercel.com and sign in
+3. Import your repository
+4. Configure:
+   - Build Command: npm run build
+   - Output Directory: dist
+   - Install Command: npm install
+5. Deploy
+6. Copy your deployment URL (e.g., https://your-app.vercel.app)
+
+STEP 2: UPDATE CONFIGURATION FILES
+----------------------------------
+After getting your production URL, update these files:
+
+A. public/.well-known/farcaster.json
+   Replace ALL instances of "https://your-domain.com" with your actual URL:
+   - homeUrl
+   - iconUrl
+   - splashImageUrl
+   - screenshotUrls
+   - heroImageUrl
+   - ogImageUrl
+   
+   Update:
+   - baseBuilder.ownerAddress: Add your Base account wallet address (0x...)
+
+B. index.html
+   Update the fc:miniapp meta tag:
+   - imageUrl: Your embed image URL
+   - url: Your production URL
+   - name: Confirm app name
+   
+   Update Open Graph tags:
+   - og:image: Your OG image URL
+
+STEP 3: UPLOAD IMAGES
+---------------------
+1. Create all required images (use Canva, Figma, or Photoshop)
+2. Upload to public/ folder
+3. Rebuild and redeploy
+4. Verify images are accessible at:
+   https://your-domain.com/embed-image.png
+   https://your-domain.com/icon.png
+   etc.
+
+STEP 4: GENERATE ACCOUNT ASSOCIATION
+------------------------------------
+This verifies you own the domain:
+
+1. Make sure all changes are deployed and live
+2. Visit: https://www.base.dev/
+3. Navigate to "Account Association" tool
+4. Enter your domain (without https://, e.g., your-app.vercel.app)
+5. Click "Submit"
+6. Click "Verify" button
+7. Follow instructions to sign with your wallet
+8. Copy the generated accountAssociation fields:
+   - header
+   - payload
+   - signature
+9. Paste into public/.well-known/farcaster.json
+10. Redeploy your app
+
+STEP 5: TEST WITH BASE BUILD PREVIEW
+------------------------------------
+1. Visit: https://www.base.dev/preview
+2. Enter your app URL
+3. Click "Launch" to test the app
+4. Check:
+   ☐ Embed image displays correctly
+   ☐ Button text is correct ("Play Trivia")
+   ☐ App launches properly
+   ☐ Questions load
+   ☐ Scoring works
+   ☐ Share button works
+   
+5. Use the "Account association" tab to verify credentials
+6. Use the "Metadata" tab to check for missing fields
+
+STEP 6: PUBLISH TO FARCASTER
+----------------------------
+1. Download Base app or use Warpcast
+2. Create a new post/cast
+3. Include your app URL in the post
+4. The Mini App embed should appear automatically
+5. Click "Launch" to test
+6. Share with the community!
+
+PRODUCTION CHECKLIST
+--------------------
+Before going live, verify:
+
+☐ All images load without 404 errors
+☐ farcaster.json is accessible at /.well-known/farcaster.json
+☐ accountAssociation is properly generated
+☐ Embed displays correctly in preview
+☐ Trivia questions load successfully
+☐ Score tracking works
+☐ 24-hour cooldown activates
+☐ Share to Farcaster button works
+☐ Tip functionality works (with connected wallet)
+☐ All URLs are production URLs (no localhost)
+☐ Error handling displays properly
+☐ Mobile responsive (test on phone)
+
+OPTIONAL ENHANCEMENTS
+--------------------
+☐ Add custom domain (e.g., trivia.yourdomain.com)
+☐ Set up analytics (Vercel Analytics, Google Analytics)
+☐ Add more trivia categories
+☐ Implement leaderboard
+☐ Add social features
+☐ Enable notifications
+
+WALLET CONFIGURATION
+-------------------
+For the self-tip feature:
+
+1. Users must connect their wallet through Base app
+2. Default behavior: sends tip from user's wallet to user's wallet
+3. To change recipient (optional):
+   - Edit src/components/TipBar.tsx
+   - In handleSendTip function
+   - Replace userAddress with your developer address
+   - Example: const recipientAddress = "0xYourAddressHere"
+
+VERCEL DEPLOYMENT COMMANDS
+--------------------------
+# Install Vercel CLI (optional)
+npm i -g vercel
+
+# Deploy from command line
+vercel
+
+# Deploy to production
+vercel --prod
+
+TROUBLESHOOTING DEPLOYMENT
+--------------------------
+Issue: Images not loading
+Fix: Check that images are in public/ folder and URLs match exactly
+
+Issue: 404 on /.well-known/farcaster.json
+Fix: Ensure public/.well-known/ folder exists and is deployed
+
+Issue: Account association fails
+Fix: Make sure your app is live before generating credentials
+
+Issue: Embed doesn't show in Farcaster
+Fix: Verify fc:miniapp meta tag is in index.html
+
+Issue: Wallet connection fails
+Fix: Test in actual Base app, not just browser
+
+MONITORING
+----------
+After deployment, monitor:
+- Error logs in hosting dashboard
+- API rate limits (Open Trivia DB)
+- User feedback
+- Wallet transaction success rate
+
+UPDATES
+-------
+To update your app:
+1. Make changes locally
+2. Test with npm run dev
+3. Build with npm run build
+4. Push to GitHub (if using CI/CD)
+5. Or deploy manually with vercel --prod
+
+IMPORTANT LINKS
+--------------
+- Your app preview: https://www.base.dev/preview
+- Base Build: https://www.base.dev/
+- Vercel Dashboard: https://vercel.com/dashboard
+- BaseScan: https://basescan.org
+- Farcaster Docs: https://miniapps.farcaster.xyz/
+
+SUCCESS METRICS
+--------------
+Track these after launch:
+- Number of plays
+- Average score
+- Share rate
+- Tip transactions
+- Return users (24h+)
+
+NEED HELP?
+---------
+1. Check browser console for errors
+2. Verify all URLs in config files
+3. Test API endpoints independently
+4. Review Farcaster Mini App docs
+5. Check Base Build preview tool errors
+
+Ready to launch! 🚀
