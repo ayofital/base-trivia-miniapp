@@ -1,29 +1,6 @@
 import { sdk } from '@farcaster/miniapp-sdk';
 import { storage } from '../utils/storage';
 
-// Helper to wait for transaction receipt
-const waitForTransactionReceipt = async (provider: any, txHash: string, maxAttempts = 30): Promise<any> => {
-  for (let i = 0; i < maxAttempts; i++) {
-    try {
-      const receipt = await provider.request({
-        method: 'eth_getTransactionReceipt',
-        params: [txHash]
-      });
-      
-      if (receipt) {
-        return receipt;
-      }
-      
-      // Wait 2 seconds before next attempt
-      await new Promise(resolve => setTimeout(resolve, 2000));
-    } catch (error) {
-      console.error('Error getting receipt:', error);
-    }
-  }
-  
-  throw new Error('Transaction receipt not found after waiting');
-};
-
 // Detect if we're in a browser with wallet support (Baseapp/standard web3)
 const getProvider = () => {
   // Check for browser wallet provider (Baseapp, MetaMask, Coinbase Wallet, etc.)
@@ -220,24 +197,7 @@ Please add more ETH to your wallet.`
         throw new Error(`Transaction failed: ${txError.message || 'Unknown error'}`);
       }
 
-      // Wait for transaction receipt to verify it actually succeeded
-      // Only do this for browser wallets, Farcaster SDK might not support it
-      if (typeof window !== 'undefined' && (window as any).ethereum) {
-        try {
-          const receipt = await waitForTransactionReceipt(provider, txHash);
-          
-          if (!receipt || receipt.status === '0x0') {
-            // Transaction failed on-chain
-            storage.updateTipStatus(tipId, 'failed', txHash);
-            throw new Error('Transaction failed on-chain. Your ETH was not sent.');
-          }
-        } catch (receiptError) {
-          console.warn('Could not verify transaction receipt:', receiptError);
-          // Don't fail the transaction just because we can't verify it
-        }
-      }
-
-      // Update tip status to success only if confirmed
+      // IMMEDIATE success - don't wait for receipt (instant feedback)
       storage.updateTipStatus(tipId, 'success', txHash);
 
       return txHash;
