@@ -5,29 +5,29 @@
     "signature": ""
   },
   "baseBuilder": {
-    "ownerAddress": "0x"
+    "ownerAddress": "0x0000000000000000000000000000000000000000"
   },
   "miniapp": {
     "version": "1",
     "name": "Base Trivia",
-    "homeUrl": "https://your-domain.com",
-    "iconUrl": "https://your-domain.com/icon.png",
-    "splashImageUrl": "https://your-domain.com/splash.png",
-    "splashBackgroundColor": "#1e40af",
+    "homeUrl": "https://trivia-base-game.vercel.app",
+    "iconUrl": "https://trivia-base-game.vercel.app/icon.png",
+    "splashImageUrl": "https://trivia-base-game.vercel.app/splash.png",
+    "splashBackgroundColor": "#667eea",
     "webhookUrl": "",
-    "subtitle": "Test your knowledge daily",
-    "description": "Challenge yourself with 5 random trivia questions. Play once every 24 hours and tip yourself on Base!",
+    "subtitle": "Test your knowledge and earn rewards on Base",
+    "description": "Challenge yourself with 5 random trivia questions. Learn something new, share your score, and reward yourself with BASE tokens!",
     "screenshotUrls": [
-      "https://your-domain.com/screenshot1.png",
-      "https://your-domain.com/screenshot2.png"
+      "https://trivia-base-game.vercel.app/screenshot1.png",
+      "https://trivia-base-game.vercel.app/screenshot2.png"
     ],
     "primaryCategory": "social",
-    "tags": ["trivia", "game", "base", "web3"],
-    "heroImageUrl": "https://your-domain.com/hero.png",
-    "tagline": "Daily trivia challenge",
-    "ogTitle": "Base Trivia Mini App",
-    "ogDescription": "Test your knowledge with 5 random trivia questions daily!",
-    "ogImageUrl": "https://your-domain.com/og-image.png",
+    "tags": ["trivia", "game", "base", "web3", "education", "rewards"],
+    "heroImageUrl": "https://trivia-base-game.vercel.app/hero.png",
+    "tagline": "Learn, Play, Earn on Base",
+    "ogTitle": "Base Trivia - Educational Game with Rewards",
+    "ogDescription": "Test your knowledge with trivia questions and reward yourself on Base!",
+    "ogImageUrl": "https://trivia-base-game.vercel.app/og-image.png",
     "noindex": false
   }
 }

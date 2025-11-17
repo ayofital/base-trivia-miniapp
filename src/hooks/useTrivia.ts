@@ -62,6 +62,9 @@ export const useTrivia = () => {
     setSelectedAnswer(null);
     setShowFeedback(false);
     setQuizComplete(false);
+    // Clear cache to ensure fresh questions
+    localStorage.removeItem('trivia_questions_cache');
+    localStorage.removeItem('trivia_cache_timestamp');
     loadQuestions();
   };
 
