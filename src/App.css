@@ -51,6 +51,32 @@ body {
   padding: 24px;
 }
 
+/* App Footer */
+.app-footer {
+  padding: 16px;
+  text-align: center;
+  background: #f9fafb;
+  border-top: 1px solid #e5e7eb;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.app-footer p {
+  margin: 0;
+}
+
+.app-footer a {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.app-footer a:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
 /* Loading Screen */
 .loading-screen {
   text-align: center;

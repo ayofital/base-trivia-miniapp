@@ -136,6 +136,10 @@ function App() {
           )
         )}
       </main>
+
+      <footer className="app-footer">
+        <p>Built on Base by <a href="https://github.com/ayofital" target="_blank" rel="noopener noreferrer">ayofital</a></p>
+      </footer>
     </div>
   );
 }
