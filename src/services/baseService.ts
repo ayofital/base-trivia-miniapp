@@ -21,6 +21,15 @@ export const baseService = {
       if (sdk?.actions?.ready) {
         await sdk.actions.ready();
         console.log('Mini App SDK initialized');
+        
+        // Signal ready again to ensure splash screen is dismissed
+        setTimeout(() => {
+          if (sdk?.actions?.ready) {
+            sdk.actions.ready().catch(err => {
+              console.warn('Delayed ready() call failed:', err);
+            });
+          }
+        }, 100);
       } else {
         console.log('Running in standard web environment (Baseapp)');
       }

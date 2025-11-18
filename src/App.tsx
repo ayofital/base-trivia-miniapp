@@ -7,6 +7,17 @@ import { baseService } from './services/baseService';
 import { storage } from './utils/storage';
 import './App.css';
 
+// Ensure Farcaster SDK is ready
+const ensureFarcasterReady = async () => {
+  try {
+    if (typeof window !== 'undefined' && (window as any).farcaster?.sdk?.actions?.ready) {
+      await (window as any).farcaster.sdk.actions.ready();
+    }
+  } catch (error) {
+    console.warn('Farcaster ready check:', error);
+  }
+};
+
 function App() {
   const {
     currentQuestion,
@@ -31,6 +42,26 @@ function App() {
   useEffect(() => {
     baseService.init();
     checkPlayEligibility();
+    
+    // Ensure Farcaster SDK is properly initialized
+    const initializeFarcaster = async () => {
+      try {
+        // Small delay to ensure DOM is ready
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        // Call ready again to dismiss splash screen
+        if ((window as any).farcaster?.sdk?.actions?.ready) {
+          await (window as any).farcaster.sdk.actions.ready();
+        }
+      } catch (error) {
+        console.warn('Farcaster initialization warning:', error);
+      }
+    };
+    
+    initializeFarcaster();
+    
+    // Additional ready call
+    ensureFarcasterReady();
   }, []);
 
   useEffect(() => {
