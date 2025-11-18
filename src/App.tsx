@@ -186,8 +186,6 @@ function App() {
       <footer className="app-footer">
         <p>
           Built on Base by{' '}
-          <a href="https://github.com/ayofital" target="_blank" rel="noopener noreferrer">ayofital</a>
-          {' '}|{' '}
           <a href="https://twitter.com/_fital719" target="_blank" rel="noopener noreferrer">🐦 @_fital719</a>
           {' '}|{' '}
           <a href="https://warpcast.com/fital719" target="_blank" rel="noopener noreferrer">🐜 @fital719</a>
