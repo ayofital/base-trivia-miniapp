@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { QuestionCard } from './components/QuestionCard';
 import { ScoreScreen } from './components/ScoreScreen';
+import { SplashScreen } from './components/SplashScreen';
 import { TipBar } from './components/TipBar';
 import { useTrivia } from './hooks/useTrivia';
 import { baseService } from './services/baseService';
@@ -38,6 +39,16 @@ function App() {
 
   const [canPlay, setCanPlay] = useState(true);
   const [timeUntilNextPlay, setTimeUntilNextPlay] = useState('');
+  const [showSplash, setShowSplash] = useState(true);
+
+  // Hide splash screen after a short delay
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     baseService.init();
@@ -93,6 +104,10 @@ function App() {
       checkPlayEligibility();
     }
   };
+
+  if (showSplash) {
+    return <SplashScreen />;
+  }
 
   if (loading) {
     return (

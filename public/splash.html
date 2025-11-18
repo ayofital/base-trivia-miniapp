@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Base Trivia</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Lexend', sans-serif;
+            color: white;
+            text-align: center;
+        }
+        .container {
+            max-width: 350px;
+            padding: 20px;
+        }
+        .icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+        .title {
+            font-size: 32px;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+        }
+        .subtitle {
+            font-size: 16px;
+            font-weight: 400;
+            margin: 0 0 32px 0;
+            opacity: 0.9;
+        }
+        .preview {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 32px;
+        }
+        .question {
+            text-align: left;
+        }
+        .category {
+            background: rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.9);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+        .text {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 16px;
+            line-height: 1.4;
+        }
+        .answers {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .answer {
+            height: 16px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+        }
+        .wallet {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .wallet-icon {
+            font-size: 20px;
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="icon">🎯</div>
+        <h1 class="title">Base Trivia</h1>
+        <p class="subtitle">Test your knowledge and earn rewards on Base</p>
+        <div class="preview">
+            <div class="question">
+                <div class="category">General Knowledge</div>
+                <div class="text">How many planets are in our solar system?</div>
+                <div class="answers">
+                    <div class="answer"></div>
+                    <div class="answer"></div>
+                    <div class="answer"></div>
+                    <div class="answer"></div>
+                </div>
+            </div>
+        </div>
+        <div class="wallet">
+            <div class="wallet-icon">💰</div>
+            <span>Earn BASE tokens for playing!</span>
+        </div>
+    </div>
+</body>
+</html>
